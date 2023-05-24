@@ -8,27 +8,42 @@ import React, { useEffect, useState } from 'react'
 
 const Temp = () => {
     const API_KEY = process.env.REACT_APP_API_KEY
-        console.log(API_KEY)
     const [searchValue, setsearchValue] = useState("Mexico");
     const [tempInfo, setTempInfo] = useState({});
     const  [nextdays  , setNextdays] = useState([])
 
     const getWeatherInfo = async () => {
-        try {
-            let url = `
+        const url = `
             https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${searchValue}
             `;
+        try {
+            
 
             const res = await fetch(url);
             const data = await res.json();
 
-            const { current: { temp_c } } = data;
+            const {
+                current: {
+                    temp_c: temp,
+                    humidity,
+                    pressure_mb: pressure,
+                    condition: { text: weathermood },
+                  },
+                location: { name, country },
+                current: { wind_kph: speed },
+              } = data;
+                
 
-            const myNewWeatherInfo = {
-                temp_c,
-            
+              const myNewWeatherInfo = {
+                temp,
+                humidity,
+                pressure,
+                weathermood,
+                name,
+                speed,
+                country,
+              };
 
-            };
             setTempInfo(myNewWeatherInfo)
         } catch (error) {
             console.log(error);
@@ -38,7 +53,8 @@ const Temp = () => {
 
 
     const futureWeather = async ()=> {
-        const url = 'https://api.weatherapi.com/v1/forecast.json?key='+API_KEY+'&q='+searchValue+'&days=3&aqi=no&alerts=no'
+        const url = 'https://api.weatherapi.com/v1/forecast.json?key='+API_KEY+'&q='+searchValue+'&days=5&aqi=no&alerts=no'
+
         try{
             const  response = await fetch(url) ;
             const data  = await response.json() ;

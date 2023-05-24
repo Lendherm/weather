@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 
 
+
 const Weathercard = ({ tempInfo }) => {
 
     const [weatherState, setweatherState] = useState();
- 
-    const  {
+
+    const {
         temp,
         humidity,
         pressure,
@@ -13,30 +14,33 @@ const Weathercard = ({ tempInfo }) => {
         name,
         speed,
         country,
-        sunset,
+       
 
     } = tempInfo;
 
+    const temperatureCelsius = temp;
+    const temperatureFahrenheit = (temp * 9) / 5 + 32;
+
     useEffect(() => {
-        if(weathermood){
+        if (weathermood) {
             switch (weathermood) {
-                case "Sunny":setweatherState("wwi-day-sunny");
-                    
-                break;
-                case "Clouds":setweatherState("wi-day-cloudy");
-                    
+                case "Sunny": setweatherState("wwi-day-sunny");
+
                     break;
-                    case "Haze":setweatherState("wi-fog");
-                    
+                case "Clouds": setweatherState("wi-day-cloudy");
+
                     break;
-                    case "Clear":setweatherState("wi-day-sunny");
-                    
+                case "Haze": setweatherState("wi-fog");
+
                     break;
-                    case "Mist":setweatherState("wi-dust");
-                    
+                case "Clear": setweatherState("wi-day-sunny");
+
                     break;
-            
-                default:setweatherState("wi-day-sunny");
+                case "Mist": setweatherState("wi-dust");
+
+                    break;
+
+                default: setweatherState("wi-day-sunny");
                     break;
             }
         }
@@ -44,15 +48,13 @@ const Weathercard = ({ tempInfo }) => {
 
     //converting sec to time
 
- let sec = sunset;
- let date = new Date(sec * 1000);
- let timeStr = `${date.getHours()}:${date.getMinutes()}`;
 
-  return (
-    <>
-      <article className="widget">
+
+    return (
+        <>
+            <article className="widget">
                 <div className="weatherIcon">
-                    <i className={`wi ${weatherState}`}></i>
+                <i className={`wi ${weatherState} icon-${tempInfo.condition?.icon?.replace(/.*\/(\d+)\.png$/, '$1')}`}></i>
                 </div>
 
                 <div className="weatherInfo">
@@ -63,9 +65,9 @@ const Weathercard = ({ tempInfo }) => {
                     <div className="description">
                         <div className="weatherCondition">{weathermood}</div>
                         <div className='country'>
-                        <div className="place"> {name}, {country}</div>
+                            <div className="place"> {name}, {country}</div>
                         </div>
-                       
+
                     </div>
                 </div>
                 <div className="date">{new Date().toLocaleString()}</div>
@@ -75,15 +77,15 @@ const Weathercard = ({ tempInfo }) => {
                         <div className="two-sided-section">
                             <p><i className={`wi ${weatherState}`}>  </i></p>
                             <p className="extra-info-leftside">
-                                {timeStr} <br />
-                                Sunset
+                                <span>{temperatureCelsius}&deg;C</span> /{" "}
+                                <span>{temperatureFahrenheit}&deg;F</span>
                             </p>
                         </div>
 
                         <div className="two-sided-section">
                             <p><i className={"wi wi-humidity"}>  </i></p>
                             <p className="extra-info-leftside">
-                            {humidity} <br />
+                                {humidity} <br />
                                 Humidity
                             </p>
                         </div>
@@ -96,22 +98,22 @@ const Weathercard = ({ tempInfo }) => {
                         <div className="two-sided-section">
                             <p><i className={"wi wi-rain"}>  </i></p>
                             <p className="extra-info-leftside">
-                            {pressure} <br />
+                                {pressure} <br />
                                 Pressure
                             </p>
                         </div>
                         <div className="two-sided-section">
                             <p><i className={"wi wi-strong-wind"}>  </i></p>
                             <p className="extra-info-leftside">
-                            {speed} <br />
+                                {speed} <br />
                                 Speed
                             </p>
                         </div>
                     </div>
                 </div>
             </article>
-    </>
-  )
+        </>
+    )
 }
 
 export default Weathercard
