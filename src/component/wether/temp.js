@@ -1,37 +1,32 @@
-// https://api.openweathermap.org/data/2.5/weather?q=pune&appid=b14be24a21dfb63b03033f8df9e0fa05
+
 import "./style.css"
 import Weathercard from "./weathercard";
+import NextDays from './NextDays/NextDays';
 
 
 import React, { useEffect, useState } from 'react'
 
 const Temp = () => {
-
+    const API_KEY = process.env.REACT_APP_API_KEY
+        console.log(API_KEY)
     const [searchValue, setsearchValue] = useState("Mexico");
     const [tempInfo, setTempInfo] = useState({});
+    const  [nextdays  , setNextdays] = useState([])
 
     const getWeatherInfo = async () => {
         try {
-            let url = `https://api.openweathermap.org/data/2.5/weather?q=${searchValue}&units=metric&appid=0a1f4f41fa91b664701a5db5efacf826`;
+            let url = `
+            https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${searchValue}
+            `;
 
             const res = await fetch(url);
             const data = await res.json();
 
-            const { temp, humidity, pressure } = data.main;
-            const { main: weathermood } = data.weather[0];
-            const {name} = data;
-            const { speed } = data.wind;
-            const { country, sunset } = data.sys;
+            const { current: { temp_c } } = data;
 
             const myNewWeatherInfo = {
-                temp,
-                humidity,
-                pressure,
-                weathermood,
-                name,
-                speed,
-                country,
-                sunset,
+                temp_c,
+            
 
             };
             setTempInfo(myNewWeatherInfo)
@@ -40,10 +35,24 @@ const Temp = () => {
         }
     }
 
+
+
+    const futureWeather = async ()=> {
+        const url = 'https://api.weatherapi.com/v1/forecast.json?key='+API_KEY+'&q='+searchValue+'&days=3&aqi=no&alerts=no'
+        try{
+            const  response = await fetch(url) ;
+            const data  = await response.json() ;
+            setNextdays(data.forecast.forecastday)
+            
+        }catch{
+            console.log('there is a  problem with  api ')
+        }
+    }
+  
     useEffect(() => {
         getWeatherInfo();
+        futureWeather()
     }, );
-
     return (
         <>
 
@@ -71,6 +80,7 @@ const Temp = () => {
             {/* our temp card */}
 
            <Weathercard tempInfo={tempInfo} />
+           <NextDays nextdays = {nextdays}  />
             
         </>
     )
